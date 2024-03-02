@@ -10,6 +10,7 @@ app.use(express.json());
 app.use(cors());
 app.use(compression()); // Compress all routes
 app.use(helmet());
+app.set("trust proxy", true);
 import main from "./routes/main.js";
 app.use("/", main);
 const PORT = process.env.PORT || 3000;

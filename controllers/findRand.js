@@ -5,6 +5,7 @@ export default async function findRandom(req, res) {
   try {
     var ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
     console.log(ip);
+    console.log(req.ip);
     if (ip && ip.includes(",")) {
       ip = ip.split(",")[0].trim();
     }
