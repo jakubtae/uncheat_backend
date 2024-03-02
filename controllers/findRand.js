@@ -3,19 +3,16 @@ import Exams from "#root/models/exams.js";
 
 export default async function findRandom(req, res) {
   try {
-    var ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-    console.log(ip);
-    console.log(req.ip);
-    if (ip && ip.includes(",")) {
-      ip = ip.split(",")[0].trim();
-    }
-    console.log(`Received request from IP: ${ip}`);
+    // Get session ID
+    const sessionId = req.session.id;
+
+    console.log(`Received request from Session ID: ${sessionId}`);
 
     // Log request parameters for debugging
     console.log("Request Parameters:", req.params);
 
     const currentExam = await Exams.findOne({
-      userIP: ip,
+      sessionId, // Look for exams associated with the session ID
       status: false,
       questions: { $size: req.params.number },
     });
@@ -40,9 +37,9 @@ export default async function findRandom(req, res) {
 
       console.log(`Fetched ${result.length} questions`);
 
-      // Create a new exam document
+      // Create a new exam document associated with the session ID
       const newExam = await Exams.create({
-        userIP: ip,
+        sessionId,
         type: req.params.type,
         questions: result,
       });

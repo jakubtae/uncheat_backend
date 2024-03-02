@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 const examsSchema = new mongoose.Schema(
   {
-    userIP: String,
+    sessionId: String,
     questions: Array,
     type: String,
     status: {
