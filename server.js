@@ -13,6 +13,7 @@ app.use(helmet());
 import main from "./routes/main.js";
 app.use("/", main);
 const PORT = process.env.PORT || 3000;
+console.log(process.env.MONGO_URI);
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
