@@ -4,6 +4,7 @@ import Exams from "#root/models/exams.js";
 export default async function findRandom(req, res) {
   try {
     var ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    console.log(ip);
     if (ip && ip.includes(",")) {
       ip = ip.split(",")[0].trim();
     }
