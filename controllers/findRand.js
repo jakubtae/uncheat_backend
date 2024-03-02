@@ -3,7 +3,8 @@ import Exams from "#root/models/exams.js";
 
 export default async function findRandom(req, res) {
   try {
-    const ip = req.headers["x-real-ip"] || req.connection.remoteAddress;
+    var ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    console.log(req.ip);
     console.log(`Received request from IP: ${ip}`);
 
     // Log request parameters for debugging
