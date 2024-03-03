@@ -10,6 +10,10 @@ const examsSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    timeTaken: {
+      minutes: Number,
+      seconds: Number,
+    },
   },
   {
     timestamps: true,

@@ -5,5 +5,5 @@ const router = express.Router();
 router.get("/", (req, res) => {
   res.json("Hello server");
 });
-router.get("/:type/:number", RandomTestInf02);
+router.post("/:type/:number", RandomTestInf02);
 export default router;

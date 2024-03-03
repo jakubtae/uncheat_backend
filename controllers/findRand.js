@@ -6,10 +6,10 @@ export default async function findRandom(req, res) {
     // Get session ID
     const sessionId = req.session.id;
 
-    console.log(`Received request from Session ID: ${sessionId}`);
+    // console.log(`Received request from Session ID: ${sessionId}`);
 
     // Log request parameters for debugging
-    console.log("Request Parameters:", req.params);
+    // console.log("Request Parameters:", req.params);
 
     const currentExam = await Exams.findOne({
       sessionId, // Look for exams associated with the session ID
@@ -18,7 +18,7 @@ export default async function findRandom(req, res) {
     });
 
     if (!currentExam) {
-      console.log("No ongoing exam found for user.");
+      // console.log("No ongoing exam found for user.");
 
       // Fetch questions for the exam
       const result = await itTask.aggregate([
@@ -35,7 +35,7 @@ export default async function findRandom(req, res) {
         },
       ]);
 
-      console.log(`Fetched ${result.length} questions`);
+      // console.log(`Fetched ${result.length} questions`);
 
       // Create a new exam document associated with the session ID
       const newExam = await Exams.create({
@@ -44,11 +44,38 @@ export default async function findRandom(req, res) {
         questions: result,
       });
 
-      console.log("Created new exam document:", newExam._id);
+      // console.log("Created new exam document:", newExam._id);
 
       return res.json({ success: true, data: newExam });
     } else {
-      console.log("Found ongoing exam for user:", currentExam._id);
+      // console.log("Found ongoing exam for user:", currentExam._id);
+      if (req.body.finished) {
+        // Calculate time taken to finish the exam
+        const startTime = currentExam.createdAt.getTime();
+        const endTime = Date.now();
+        const timeTaken = endTime - startTime;
+
+        // Format time taken into minutes and seconds
+        const minutesTaken = Math.floor(timeTaken / (1000 * 60));
+        const secondsTaken = Math.floor((timeTaken / 1000) % 60);
+
+        // Update exam status and send back time taken
+        await Exams.findByIdAndUpdate(currentExam._id, {
+          status: true,
+          timeTaken: {
+            minutes: minutesTaken,
+            seconds: secondsTaken,
+          },
+        });
+        return res.json({
+          success: true,
+          timeTaken: {
+            minutes: minutesTaken,
+            seconds: secondsTaken,
+          },
+          message: "You finished!",
+        });
+      }
 
       const startTime = currentExam.createdAt.getTime();
       const currentTime = Date.now();
@@ -60,7 +87,7 @@ export default async function findRandom(req, res) {
       const secondsLeft = Math.floor((timeLeft % (60 * 1000)) / 1000);
 
       if (timeLeft === 0) {
-        console.log("Time's up for the ongoing exam. Setting status to true.");
+        // console.log("Time's up for the ongoing exam. Setting status to true.");
         await Exams.findByIdAndUpdate(currentExam._id, { status: true });
         return res.json({
           success: true,
@@ -69,10 +96,10 @@ export default async function findRandom(req, res) {
         });
       }
 
-      console.log("Time left for the ongoing exam:", {
-        minutesLeft,
-        secondsLeft,
-      });
+      // console.log("Time left for the ongoing exam:", {
+      //   minutesLeft,
+      //   secondsLeft,
+      // });
 
       return res.json({
         success: true,
